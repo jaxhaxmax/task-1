@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0d1b2a;
+  --color-deep: #173a5e;
+  --color-coral: #ff5a36;
+  --color-mango: #ffb238;
+  --color-foam: #7fd1c1;
+  --color-sand: #f2e8d5;
+  --color-muted: #8aa0b4;
+
+  --font-display: var(--f-display), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--f-mono), ui-monospace, monospace;
+  --font-sans: var(--f-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--color-ink);
+  color: var(--color-sand);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* 16px minimum stops iOS Safari from zooming when an input is focused. */
+input,
+textarea,
+select,
+button {
+  font-size: 16px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-mango);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+canvas {
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes chip-pop {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.chip-pop {
+  animation: chip-pop 180ms ease-out;
+}
