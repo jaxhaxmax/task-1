@@ -1,11 +1,6 @@
 import type { Focal } from "../types";
 import { clamp } from "./crop";
 
-/**
- * Pure enhancement. The FaceDetector API ships in very few browsers, so this
- * must never be awaited before the first paint - render with the heuristic
- * focal immediately and let this refine it if it happens to resolve.
- */
 export async function detectFocal(bmp: ImageBitmap): Promise<Focal | null> {
   if (typeof window === "undefined" || !("FaceDetector" in window)) return null;
 

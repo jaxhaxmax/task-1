@@ -3,21 +3,11 @@ import type { FormatSpec, Layer } from "../../types";
 import { fD, fM } from "../fonts";
 import { linGrad } from "../helpers";
 
-/**
- * PFP - 1000x1000.
- *
- * X CROPS PROFILE PICTURES TO A CIRCLE. All essential branding therefore lives
- * in the ANNULUS between r=418 and r=500, not in a rectangular border - a
- * rectangular frame is invisible exactly where it matters.
- *
- * The corners are dead space for an avatar, so they carry the extras (serial,
- * hashtag, goa mark) which only appear when the image is posted as a square.
- */
 const CX = 500;
 const CY = 500;
-const R_IN = 418; // photo edge
-const R_OUT = 500; // canvas edge
-const R_MID = (R_IN + R_OUT) / 2; // 459, ring centreline where arc text sits
+const R_IN = 418; 
+const R_OUT = 500; 
+const R_MID = (R_IN + R_OUT) / 2; 
 
 export function pfpSpec(): FormatSpec {
   const background: Layer[] = [
@@ -34,7 +24,7 @@ export function pfpSpec(): FormatSpec {
   ];
 
   const foreground: Layer[] = [
-    // --- the ring -----------------------------------------------------------
+    
     {
       kind: "custom",
       draw: (ctx) => {
@@ -44,7 +34,7 @@ export function pfpSpec(): FormatSpec {
         ctx.arc(CX, CY, R_MID, 0, Math.PI * 2);
         ctx.stroke();
 
-        // hairlines separate photo from ring and ring from edge
+        
         ctx.lineWidth = 3;
         ctx.strokeStyle = "rgba(13,27,42,0.50)";
         ctx.beginPath();
@@ -58,7 +48,7 @@ export function pfpSpec(): FormatSpec {
       },
     },
 
-    // --- ring text ----------------------------------------------------------
+    
     {
       kind: "arcText",
       value: `${EVENT.name} \u00B7 ${EVENT.year}`,
@@ -83,7 +73,7 @@ export function pfpSpec(): FormatSpec {
       letterSpacing: 4,
     },
 
-    // --- corner marks (outside the circle, invisible as an avatar) ----------
+    
     {
       kind: "text",
       value: String(EVENT.cohort),
@@ -123,7 +113,7 @@ export function pfpSpec(): FormatSpec {
     },
   ];
 
-  void fD; // display face unused here; the ring is intentionally all-mono
+  void fD; 
 
   return { id: "pfp", w: 1000, h: 1000, background, photoSlots: [
     { x: CX - R_IN, y: CY - R_IN, w: R_IN * 2, h: R_IN * 2, shape: "circle" },

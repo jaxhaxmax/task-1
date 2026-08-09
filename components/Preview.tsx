@@ -3,11 +3,6 @@ import { useRef, type PointerEvent as RPointerEvent, type RefObject } from "reac
 import type { Focal } from "@/lib/types";
 import { clamp } from "@/lib/image/crop";
 
-/**
- * The canvas renders at full export resolution and is scaled down by CSS, so
- * pointer deltas must be converted back into canvas space before they become
- * focal deltas. Pointer events (not mouse events) so touch works for free.
- */
 export function Preview({
   canvasRef,
   activeIndex,
@@ -41,7 +36,7 @@ export function Preview({
     if (!c) return;
 
     const rect = c.getBoundingClientRect();
-    const k = c.width / rect.width; // CSS px -> canvas px
+    const k = c.width / rect.width; 
     const dx = (e.clientX - drag.current.x) * k;
     const dy = (e.clientY - drag.current.y) * k;
     drag.current = { x: e.clientX, y: e.clientY };

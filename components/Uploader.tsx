@@ -15,7 +15,7 @@ export function Uploader({
 
   const pick = useCallback(() => inputRef.current?.click(), []);
 
-  // Desktop users will paste. Five lines, worth it.
+  
   useEffect(() => {
     const onPaste = (e: ClipboardEvent) => {
       const item = Array.from(e.clipboardData?.items ?? []).find((i) =>

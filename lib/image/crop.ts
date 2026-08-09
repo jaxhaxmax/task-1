@@ -3,12 +3,6 @@ import type { Focal } from "../types";
 export const clamp = (v: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, v));
 
-/**
- * The brief requires the tool to work on uncropped photos. Faces sit in the
- * upper portion of nearly every portrait, so when we have to crop vertically we
- * keep the top rather than centring. Zero dependencies, correct ~90% of the time,
- * and drag-to-reposition covers the rest.
- */
 export function defaultFocal(
   imgW: number,
   imgH: number,
@@ -17,12 +11,11 @@ export function defaultFocal(
 ): Focal {
   const imgAspect = imgW / imgH;
   const dstAspect = dstW / dstH;
-  // Source is taller than the target box => vertical crop => bias upward.
+  
   const y = imgAspect < dstAspect ? 0.3 : 0.5;
   return { x: 0.5, y, zoom: 1 };
 }
 
-/** Source rectangle for a "cover" fit, offset by the focal point. */
 export function coverRect(
   imgW: number,
   imgH: number,
@@ -39,7 +32,6 @@ export function coverRect(
   return { sx, sy, sw, sh };
 }
 
-/** Destination rectangle for a "contain" fit. Used by the OG composite. */
 export function containRect(
   imgW: number,
   imgH: number,

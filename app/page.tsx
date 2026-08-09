@@ -61,8 +61,7 @@ export default function Page() {
     if (msg) setTimeout(() => setToast({ msg: "", kind: "info" }), 4000);
   }, []);
 
-  /* ---------------------------------------------------------- persistence */
-
+  
   useEffect(() => {
     try {
       const raw = localStorage.getItem(LS_KEY);
@@ -72,20 +71,17 @@ export default function Page() {
       if (d.role) setRole(d.role);
       if (d.team) setTeam(d.team);
     } catch {
-      /* ignore */
-    }
+          }
   }, []);
 
   useEffect(() => {
     try {
       localStorage.setItem(LS_KEY, JSON.stringify({ name, role, team }));
     } catch {
-      /* ignore */
-    }
+          }
   }, [name, role, team]);
 
-  /* ------------------------------------------------------------- derived */
-
+  
   const { title, rarity, serial } = useMemo(
     () => builderTitle(name, role, salt),
     [name, role, salt],
@@ -97,7 +93,7 @@ export default function Page() {
     if (format === "pfp") return pfpSpec();
     if (format === "idcard") return idcardSpec();
     return teamSpec(memberCount);
-    // fonts resolve lazily inside the spec builders, so rebuilding is cheap
+    
   }, [format, memberCount]);
 
   const input: RenderInput = useMemo(
@@ -115,8 +111,7 @@ export default function Page() {
     [photos, focals, name, role, team, memberNames, title, rarity, serial],
   );
 
-  /* -------------------------------------------------------------- upload */
-
+  
   const handleFile = useCallback(
     async (file: File, index = 0) => {
       setDecoding(true);
@@ -171,8 +166,7 @@ export default function Page() {
     [say, spec, input],
   );
 
-  /* -------------------------------------------------------------- render */
-
+  
   useEffect(() => {
     let cancelled = false;
     const t = setTimeout(async () => {
@@ -188,10 +182,7 @@ export default function Page() {
     };
   }, [spec, input]);
 
-  /* --------------------------------------------------- eager share prep */
-  /* Runs AFTER render settles. Building the File up front is what keeps the
-     iOS user gesture alive when Share is tapped - see lib/share.ts.          */
-
+    
   useEffect(() => {
     let cancelled = false;
     const t = setTimeout(async () => {
@@ -251,8 +242,7 @@ export default function Page() {
 
   const hasPhoto = photos.some(Boolean);
 
-  /* ----------------------------------------------------------------- ui */
-
+  
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-8 lg:py-12">
       <header className="mb-6">

@@ -5,14 +5,6 @@ export const runtime = "nodejs";
 
 const MAX = 5_000_000;
 
-/**
- * Stores the generated art and its OG composite so /f/{id} can serve a real
- * link preview.
- *
- * NEVER THROWS. If storage is unconfigured or fails, we return { id: null } and
- * the client degrades to the download + native-share path. A broken share is
- * bad; a broken app is worse.
- */
 export async function POST(req: Request) {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return Response.json({ id: null });
@@ -36,7 +28,7 @@ export async function POST(req: Request) {
       put(`f/${id}.png`, art, {
         access: "public",
         contentType: "image/png",
-        addRandomSuffix: false, // LOAD-BEARING: makes the URL rebuildable from id
+        addRandomSuffix: false, 
       }),
       put(`f/${id}-og.png`, og, {
         access: "public",

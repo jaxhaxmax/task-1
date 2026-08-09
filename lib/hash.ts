@@ -1,8 +1,3 @@
-/**
- * cyrb53 - fast, well-distributed, non-cryptographic 53-bit hash.
- * Used so a given name + stack always produces the same builder title, serial,
- * and barcode. Determinism is the point: the card has to feel issued, not rolled.
- */
 export function cyrb53(str: string, seed = 0): number {
   let h1 = 0xdeadbeef ^ seed;
   let h2 = 0x41c6ce57 ^ seed;

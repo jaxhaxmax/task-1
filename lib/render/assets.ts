@@ -1,8 +1,3 @@
-/**
- * Brand assets are optional. Until the official Brand Kit lands in public/brand
- * these files do not exist, so a failed load must be silent and the layer simply
- * skipped - never a broken render.
- */
 const cache = new Map<string, HTMLImageElement | null>();
 const inflight = new Map<string, Promise<HTMLImageElement | null>>();
 
@@ -23,7 +18,7 @@ export function loadAsset(src: string): Promise<HTMLImageElement | null> {
       resolve(img);
     };
     img.onerror = () => {
-      cache.set(src, null); // remember the miss, do not retry every render
+      cache.set(src, null); 
       resolve(null);
     };
     img.src = src;

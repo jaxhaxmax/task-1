@@ -21,7 +21,6 @@ function resolve<T>(v: Dyn<T>, i: RenderInput): T {
   return typeof v === "function" ? (v as (i: RenderInput) => T)(i) : v;
 }
 
-/* ------------------------------------------------------------------ photos */
 
 function clipToSlot(ctx: CanvasRenderingContext2D, slot: PhotoSlot) {
   if (slot.shape === "circle") {
@@ -78,14 +77,13 @@ function drawRing(ctx: CanvasRenderingContext2D, slot: PhotoSlot) {
   ctx.restore();
 }
 
-/** Empty state. The frame must look complete before anything is uploaded. */
 function drawPlaceholder(ctx: CanvasRenderingContext2D, slot: PhotoSlot) {
   ctx.save();
   clipToSlot(ctx, slot);
   ctx.fillStyle = "rgba(255,255,255,0.05)";
   ctx.fillRect(slot.x, slot.y, slot.w, slot.h);
 
-  // simple head-and-shoulders silhouette
+  
   const cx = slot.x + slot.w / 2;
   const headR = slot.w * 0.16;
   const headY = slot.y + slot.h * 0.36;
@@ -99,7 +97,6 @@ function drawPlaceholder(ctx: CanvasRenderingContext2D, slot: PhotoSlot) {
   ctx.restore();
 }
 
-/* ------------------------------------------------------------------ layers */
 
 function drawLayer(
   ctx: CanvasRenderingContext2D,
@@ -128,7 +125,7 @@ function drawLayer(
 
     case "asset": {
       const img = getAsset(l.src);
-      if (!img) break; // silently skip - the Brand Kit may not be in place yet
+      if (!img) break; 
       ctx.save();
       ctx.globalAlpha = l.opacity ?? 1;
       if (l.blend) ctx.globalCompositeOperation = l.blend;
@@ -256,7 +253,7 @@ function drawLayer(
       let text = value;
       if (l.maxW) {
         const ls = l.letterSpacing ?? 0;
-        // account for tracking when fitting
+        
         const budget = l.maxW - ls * Math.max(0, value.length - 1);
         const fitted = fitText(ctx, value, l.font, budget, l.minScale ?? 0.6);
         ctx.font = fitted.font;
@@ -332,7 +329,6 @@ function drawLayer(
   }
 }
 
-/* ------------------------------------------------------------------ engine */
 
 export function specAssets(spec: FormatSpec, input: RenderInput): string[] {
   const out: string[] = [];
@@ -347,20 +343,12 @@ export function specAssets(spec: FormatSpec, input: RenderInput): string[] {
   return out;
 }
 
-/**
- * The whole renderer. Order matters: background, photos, then all chrome and
- * text on top.
- *
- * No devicePixelRatio scaling - the canvas renders at fixed export resolution
- * and is scaled down by CSS. Applying DPR would change the export size and
- * invalidate every hardcoded coordinate in the specs.
- */
 export async function renderSpec(
   spec: FormatSpec,
   input: RenderInput,
   target?: HTMLCanvasElement,
 ): Promise<HTMLCanvasElement> {
-  await ensureFonts(); // LOAD-BEARING - first line, always
+  await ensureFonts(); 
   await Promise.all(specAssets(spec, input).map(loadAsset));
 
   const canvas = target ?? document.createElement("canvas");

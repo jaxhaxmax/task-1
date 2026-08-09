@@ -1,10 +1,6 @@
 import { EVENT } from "./brand";
 import type { FormatId } from "./types";
 
-/**
- * Pre-filled into the X composer. Kept under ~240 chars so the link still fits.
- * Two emoji maximum - more reads as spam and suppresses reach.
- */
 export function caption(
   format: FormatId,
   d: { name: string; title: string; serial: string; team: string; members: number },

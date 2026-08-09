@@ -12,19 +12,10 @@ import {
   stubLayers,
 } from "./idcard";
 
-/**
- * TEAM PASS - 1600x900.
- *
- * Explicitly required by the task page ("bring your teammates into one combined
- * frame") and absent from the PDF, so most submissions will miss it.
- *
- * All chrome is IMPORTED from idcard.ts. If this file grows past ~120 lines you
- * have started duplicating instead of reusing.
- */
 
 const ROW_LEFT = 40;
-const ROW_W = 1070; // main body minus margins
-const ROW_CY = 300; // vertical centre of the avatar row
+const ROW_W = 1070; 
+const ROW_CY = 300; 
 
 export function teamSlots(n: number): PhotoSlot[] {
   const count = Math.max(2, Math.min(6, n));
@@ -41,8 +32,6 @@ export function teamSlots(n: number): PhotoSlot[] {
   }));
 }
 
-/** Names sit BENEATH the circles rather than overlapping them - named members
- *  are what make people tag each other, and tags are what drive replies. */
 function memberNameLayers(n: number): Layer[] {
   const slots = teamSlots(n);
   const gap = ROW_W / Math.max(2, Math.min(6, n));

@@ -34,7 +34,6 @@ export function Field({
   );
 }
 
-/** The title is a REVEAL, not a dropdown. Re-rolls drive repeat posts. */
 export function TitleReveal({
   title,
   rarity,

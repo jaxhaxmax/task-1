@@ -2,31 +2,20 @@ import { C, EVENT, GRAD, RARITY, ASSETS } from "../../brand";
 import type { FormatSpec, Layer, RenderInput } from "../../types";
 import { fD, fM } from "../fonts";
 
-/**
- * BUILDER PASS - 1600x900.
- *
- * A boarding pass, not a badge. Every other submission is a dark rounded rect
- * with a neon border; that design is not tied to this event in any way. This one
- * is: you are flying to Goa on 28 Oct, staying four days, and you are one of 247.
- *
- * 16:9 is the only aspect ratio X never crops in-feed, which is why the layout
- * is horizontal rather than a vertical badge.
- */
 
 export const W = 1600;
 export const H = 900;
-export const PERF_X = 1150; // perforation - main body left, stub right
+export const PERF_X = 1150; 
 export const HEADER_H = 112;
 export const MARQUEE_Y = 852;
 
-/* Shared chrome. team.ts IMPORTS these - it must not duplicate them. */
 
 export function headerLayers(centreText: string): Layer[] {
   return [
     { kind: "rect", x: 0, y: 0, w: W, h: HEADER_H, fill: "rgba(13,27,42,0.55)" },
     { kind: "gradientRect", x: 0, y: HEADER_H - 2, w: W, h: 3, stops: GRAD.sunrise },
 
-    // wordmark: coral tick + type. Replace with the Brand Kit asset when it lands.
+    
     { kind: "rect", x: 56, y: 40, w: 10, h: 34, fill: C.coral, radius: 2 },
     {
       kind: "text",
@@ -74,14 +63,14 @@ export function perforationLayers(): Layer[] {
       color: "rgba(242,232,213,0.45)",
       width: 3,
     },
-    // punch-outs top and bottom sell the perforation
+    
     { kind: "notch", cx: PERF_X, cy: HEADER_H, r: 22, color: C.ink },
     { kind: "notch", cx: PERF_X, cy: MARQUEE_Y, r: 22, color: C.ink },
   ];
 }
 
 export function stubLayers(): Layer[] {
-  const cx = PERF_X + (W - PERF_X) / 2; // 1375
+  const cx = PERF_X + (W - PERF_X) / 2; 
 
   return [
     {
@@ -167,7 +156,6 @@ export function backgroundLayers(): Layer[] {
   ];
 }
 
-/** Data row cell: a foam label with a sand value beneath it. */
 export function dataCell(
   x: number,
   label: string,
@@ -198,13 +186,12 @@ export function dataCell(
   ];
 }
 
-/* -------------------------------------------------------------- the spec */
 
 export function idcardSpec(): FormatSpec {
   const foreground: Layer[] = [
     ...headerLayers("BUILDER BOARDING PASS"),
 
-    // fare-class eyebrow above the name, coloured by rarity
+    
     {
       kind: "text",
       value: (i) => `\u25C6 ${RARITY[i.rarity].label} CLASS`,
@@ -248,7 +235,7 @@ export function idcardSpec(): FormatSpec {
       border: C.coral,
     },
 
-    // stamp overlaps the lower-left of the photo. The overlap is the point.
+    
     {
       kind: "stamp",
       x: 56,
@@ -271,7 +258,7 @@ export function idcardSpec(): FormatSpec {
     ...stubLayers(),
     marqueeLayer(),
 
-    // FOUNDER class gets an inset border. A visible payoff makes people re-roll.
+    
     {
       kind: "when",
       cond: (i) => i.rarity === "legendary",

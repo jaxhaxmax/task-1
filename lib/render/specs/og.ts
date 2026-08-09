@@ -3,17 +3,6 @@ import type { FormatSpec, Layer } from "../../types";
 import { containRect } from "../../image/crop";
 import { fD, fM } from "../fonts";
 
-/**
- * OG COMPOSITE - 1200x630.
- *
- * Never downloaded. This is the og:image on /f/{id} and nothing else.
- *
- * X renders summary_large_image at roughly 1.91:1, so a 16:9 card gets
- * letterboxed or edge-cropped in the preview. The generated art is therefore
- * drawn CONTAINED on a branded backdrop - no part of anyone's face is ever cut
- * off in the preview - and the surrounding chrome doubles as advertising in
- * every feed the link appears in.
- */
 
 const BOX = { x: 120, y: 84, w: 960, h: 420 };
 

@@ -1,6 +1,5 @@
 import type { Stop } from "../types";
 
-/* ------------------------------------------------------------------ paths */
 
 export function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -46,12 +45,7 @@ export function radGrad(
   return g;
 }
 
-/* -------------------------------------------------------------------- text */
 
-/**
- * Shrink a CSS font shorthand until the text fits maxW. Below minScale we stop
- * shrinking and ellipsise instead - a 30px name in a 92px slot looks broken.
- */
 export function fitText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -82,7 +76,6 @@ export function fitText(
   return { font: floorFont, text: t.length < text.length ? t + "\u2026" : t };
 }
 
-/** ctx.letterSpacing exists in Chrome but not Safari, so draw per character. */
 export function lsText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -122,14 +115,6 @@ export function measureLs(
   return chars.reduce((s, c) => s + ctx.measureText(c).width + ls, 0) - ls;
 }
 
-/**
- * Text on a circular arc. The `flip` argument is the entire reason this exists:
- * without it, text on the bottom of a ring renders upside down.
- *
- * Canvas angles: 0 = right, -PI/2 = up, PI/2 = down.
- *   top arc    -> centerAngle: -Math.PI/2, flip: false
- *   bottom arc -> centerAngle:  Math.PI/2, flip: true
- */
 export function drawArcText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -165,7 +150,6 @@ export function drawArcText(
   ctx.restore();
 }
 
-/* ----------------------------------------------------------------- texture */
 
 let grainTile: HTMLCanvasElement | null = null;
 let grainKey = "";
@@ -202,16 +186,7 @@ export function drawGrain(
   ctx.drawImage(grainTile, 0, 0);
 }
 
-/* --------------------------------------------------------------- signature */
 
-/**
- * THE SIGNATURE ELEMENT. A rotated, distressed ink stamp is a physical gesture
- * in a category that is uniformly glossy and digital.
- *
- * The destination-out distress pass is what makes it read as pressed ink rather
- * than clipart. Do not remove it. The seed keeps it deterministic so the same
- * person always gets the same stamp.
- */
 export function drawStamp(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -246,7 +221,7 @@ export function drawStamp(
   ctx.font = fonts.bottom;
   lsText(ctx, lines[1], 0, h * 0.24, 3, "center");
 
-  // Distress: punch deterministic holes so the ink looks pressed, not printed.
+  
   ctx.globalCompositeOperation = "destination-out";
   let s = seed || 1;
   const rnd = () => ((s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
@@ -259,7 +234,6 @@ export function drawStamp(
   ctx.restore();
 }
 
-/** Deterministic barcode, seeded so a person's card is always identical. */
 export function drawBarcode(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -285,7 +259,6 @@ export function drawBarcode(
   ctx.restore();
 }
 
-/** Repeating strip of text, e.g. the footer tagline. Static, not animated. */
 export function drawMarquee(
   ctx: CanvasRenderingContext2D,
   text: string,

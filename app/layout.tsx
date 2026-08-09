@@ -2,11 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-/**
- * display: "block" matters. With "swap" a fallback face can render, and if the
- * canvas paints during that window the export is set in Arial with no error.
- * See lib/render/fonts.ts for the other half of this problem.
- */
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--f-display",
@@ -28,7 +23,7 @@ const sans = Inter({
 const BASE = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE), // without this, relative OG URLs break in prod
+  metadataBase: new URL(BASE), 
   title: "Frame in Goa \u2014 Hacker House Goa 2026",
   description:
     "Drop a photo, get your Hacker House Goa 2026 profile frame or builder boarding pass. Download it, post it. #FrameInGoa",

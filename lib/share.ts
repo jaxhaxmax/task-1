@@ -11,16 +11,6 @@ export function toBlob(c: HTMLCanvasElement): Promise<Blob> {
   );
 }
 
-/**
- * Called on every RENDER COMPLETION, never on click.
- *
- * Two reasons this must happen eagerly:
- *   1. iOS Safari treats an intervening network await as consuming the user
- *      gesture, so navigator.share() throws NotAllowedError. The File has to
- *      already exist when the click handler runs.
- *   2. By the time the user reaches for Share, the blob upload has usually
- *      already resolved, so the share feels instant.
- */
 export async function prepareShare(
   artCanvas: HTMLCanvasElement,
   ogCanvas: HTMLCanvasElement,
@@ -47,30 +37,20 @@ export async function prepareShare(
 
 export type ShareResult = "native" | "cancelled" | "link" | "link-fallback";
 
-/**
- * Three tiers, tried in order.
- *
- *   A  Web Share Level 2  - native sheet with the image ATTACHED. The real
- *      mobile answer, and the reason the tool satisfies "one pass, start to
- *      finish" where competitors tell users to attach the file by hand.
- *   B  OG link           - X's web intent CANNOT attach an image, so we pass a
- *      /f/{id} URL whose card preview IS the generated graphic.
- *   C  homepage fallback - storage unconfigured or offline.
- */
 export async function shareToX(
   payload: SharePayload | null,
   captionText: string,
 ): Promise<ShareResult> {
-  // canShare() is synchronous, so the user gesture survives into share().
+  
   if (payload && navigator.canShare?.({ files: [payload.file] })) {
     try {
-      // NOTE: files + text only. Including `url` alongside files makes some
-      // Android targets silently drop the image.
+      
+      
       await navigator.share({ files: [payload.file], text: captionText });
       return "native";
     } catch (e) {
       if ((e as { name?: string })?.name === "AbortError") return "cancelled";
-      // any other failure falls through to the link path
+      
     }
   }
 
@@ -87,7 +67,6 @@ export async function shareToX(
   return id ? "link" : "link-fallback";
 }
 
-/** Revoking the object URL immediately breaks the download in Safari. */
 export function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");

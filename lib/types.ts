@@ -1,4 +1,3 @@
-/** The render contract. Three formats are three data objects, not three components. */
 
 export type FormatId = "pfp" | "idcard" | "team" | "og";
 
@@ -7,8 +6,7 @@ export type Rarity = "common" | "rare" | "epic" | "legendary";
 export type Focal = { x: number; y: number; zoom: number };
 
 export type RenderInput = {
-  /** Index-matched to spec.photoSlots. null renders a placeholder silhouette. */
-  photos: (ImageBitmap | null)[];
+    photos: (ImageBitmap | null)[];
   focals: Focal[];
   name: string;
   role: string;
@@ -19,7 +17,6 @@ export type RenderInput = {
   serial: string;
 };
 
-/** A value that may be static or derived from the current input. */
 export type Dyn<T> = T | ((i: RenderInput) => T);
 
 export type Stop = [number, string];
@@ -30,8 +27,7 @@ export type PhotoSlot = {
   w: number;
   h: number;
   shape: "circle" | "rect";
-  /** corner rounding, rect only */
-  radius?: number;
+    radius?: number;
   ring?: { width: number; colors: string[] };
 };
 
@@ -42,10 +38,8 @@ type TextCommon = {
   color: Dyn<string>;
   align?: CanvasTextAlign;
   baseline?: CanvasTextBaseline;
-  /** triggers auto-shrink via fitText */
-  maxW?: number;
-  /** floor for auto-shrink as a fraction of the base size, default 0.6 */
-  minScale?: number;
+    maxW?: number;
+    minScale?: number;
   letterSpacing?: number;
   upper?: boolean;
   opacity?: number;
@@ -100,8 +94,7 @@ export type Layer =
       h: number;
       radius?: number;
       stops: Stop[];
-      /** gradient direction, defaults to horizontal */
-      vertical?: boolean;
+            vertical?: boolean;
     }
   | {
       kind: "dashed";
@@ -192,7 +185,6 @@ export type FormatSpec = {
   w: number;
   h: number;
   background: Layer[];
-  /** a function when the slot count depends on input, e.g. team size */
-  photoSlots: PhotoSlot[] | ((i: RenderInput) => PhotoSlot[]);
+    photoSlots: PhotoSlot[] | ((i: RenderInput) => PhotoSlot[]);
   foreground: Layer[] | ((i: RenderInput) => Layer[]);
 };

@@ -1,10 +1,6 @@
 import { cyrb53 } from "./hash";
 import type { Rarity } from "./types";
 
-/**
- * Vocabulary is AI x Crypto x the actual event, deliberately without emoji.
- * An emoji in the chip makes it read as a Discord role and breaks the document.
- */
 export const TITLES: Record<Rarity, string[]> = {
   common: [
     "Terminal Native",
@@ -57,17 +53,10 @@ export const TITLES: Record<Rarity, string[]> = {
 export type TitleResult = {
   title: string;
   rarity: Rarity;
-  /** zero-padded, 001..247 */
-  serial: string;
-  /** stable integer used to seed the stamp distress and the barcode */
-  seed: number;
+    serial: string;
+    seed: number;
 };
 
-/**
- * Deterministic in (name, role, salt). Salt increments on re-roll.
- * Empty input still yields a valid result so the preview looks complete before
- * the user types anything.
- */
 export function builderTitle(name: string, role: string, salt = 0): TitleResult {
   const key = `${name.trim().toLowerCase()}|${role.trim().toLowerCase()}|${salt}`;
   const h = cyrb53(key);
