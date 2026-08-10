@@ -246,6 +246,7 @@ function drawLayer(
 
       ctx.save();
       ctx.globalAlpha = l.opacity ?? 1;
+      if (l.blend) ctx.globalCompositeOperation = l.blend;
       ctx.font = l.font;
       ctx.fillStyle = resolve(l.color, input);
       ctx.textBaseline = l.baseline ?? "alphabetic";
@@ -365,7 +366,10 @@ export async function renderSpec(
   const slots =
     typeof spec.photoSlots === "function" ? spec.photoSlots(input) : spec.photoSlots;
 
-  slots.forEach((slot, i) => {
+  // Render photos asynchronously to unblock UI
+  for (let i = 0; i < slots.length; i++) {
+    const slot = slots[i];
+    await new Promise((r) => requestAnimationFrame(r)); // Yield for a frame
     const bmp = input.photos[i];
     if (!bmp) {
       drawPlaceholder(ctx, slot);
@@ -379,7 +383,9 @@ export async function renderSpec(
     ctx.drawImage(bmp, sx, sy, sw, sh, slot.x, slot.y, slot.w, slot.h);
     ctx.restore();
     if (slot.ring) drawRing(ctx, slot);
-  });
+  }
+
+  await new Promise((r) => requestAnimationFrame(r)); // Yield before final foreground
 
   const fg =
     typeof spec.foreground === "function" ? spec.foreground(input) : spec.foreground;

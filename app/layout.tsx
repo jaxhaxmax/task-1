@@ -1,19 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
+import { Barlow_Condensed, JetBrains_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
+/* Huge condensed grotesque — bold tropical display */
+const display = Barlow_Condensed({
   subsets: ["latin"],
+  weight: ["700", "800", "900"],
+  style: ["normal", "italic"],
   variable: "--f-display",
   display: "block",
 });
 
+/* Tight monospace for metadata, labels, serial numbers */
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--f-mono",
   display: "block",
 });
 
+/* Body / UI sans */
 const sans = Inter({
   subsets: ["latin"],
   variable: "--f-sans",
@@ -23,12 +28,12 @@ const sans = Inter({
 const BASE = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE), 
-  title: "Frame in Goa \u2014 Hacker House Goa 2026",
+  metadataBase: new URL(BASE),
+  title: "Frame in Goa — Hacker House Goa 2026",
   description:
     "Drop a photo, get your Hacker House Goa 2026 profile frame or builder boarding pass. Download it, post it. #FrameInGoa",
   openGraph: {
-    title: "Frame in Goa \u2014 Hacker House Goa 2026",
+    title: "Frame in Goa — Hacker House Goa 2026",
     description:
       "Drop a photo, get your HH Goa 2026 frame or builder pass in seconds. No login.",
     type: "website",
@@ -36,14 +41,14 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Frame in Goa \u2014 Hacker House Goa 2026",
+    title: "Frame in Goa — Hacker House Goa 2026",
     description:
       "Drop a photo, get your HH Goa 2026 frame or builder pass in seconds. No login.",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0D1B2A",
+  themeColor: "#F5ECD7",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,

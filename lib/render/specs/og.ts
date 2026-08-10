@@ -1,61 +1,61 @@
-import { C, EVENT, GRAD } from "../../brand";
+import { C, EVENT } from "../../brand";
 import type { FormatSpec, Layer } from "../../types";
 import { containRect } from "../../image/crop";
 import { fD, fM } from "../fonts";
-
+import { misregText } from "./idcard";
 
 const BOX = { x: 120, y: 84, w: 960, h: 420 };
 
 export function ogSpec(art: HTMLCanvasElement, siteLabel: string): FormatSpec {
   const foreground: Layer[] = [
-    { kind: "rect", x: 0, y: 0, w: 10, h: 630, fill: C.coral },
+    // Branding bar on the left
+    { kind: "rect", x: 0, y: 0, w: 16, h: 630, fill: C.coral, stroke: C.ink, lineWidth: 4 },
+    
+    // Draw the generated art (ID Card, PFP, etc.) with a hard shadow
     {
       kind: "custom",
       draw: (ctx) => {
         const r = containRect(art.width, art.height, BOX.x, BOX.y, BOX.w, BOX.h);
         ctx.save();
-        ctx.shadowColor = "rgba(0,0,0,0.45)";
-        ctx.shadowBlur = 40;
-        ctx.shadowOffsetY = 12;
+        
+        // Brutalist hard shadow
+        ctx.fillStyle = C.deep;
+        ctx.fillRect(r.x + 12, r.y + 12, r.w, r.h);
+        
+        // Thick border
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = C.ink;
+        ctx.strokeRect(r.x, r.y, r.w, r.h);
+        
         ctx.drawImage(art, r.x, r.y, r.w, r.h);
         ctx.restore();
       },
     },
-    {
-      kind: "text",
-      value: `${EVENT.short} ${EVENT.year}`,
-      x: 120,
-      y: 56,
-      font: fD(800, 32),
-      color: C.sand,
-      letterSpacing: 2,
-    },
+
+    ...misregText(`${EVENT.short} ${EVENT.year}`, 120, 48, fD(900, 42), "left", undefined, 0.5, true, 2),
+
     {
       kind: "text",
       value: EVENT.hashtag,
       x: 1080,
       y: 56,
       align: "right",
-      font: fM(400, 26),
-      color: C.muted,
+      font: fM(700, 32),
+      color: C.ink,
+      letterSpacing: 2
     },
-    {
-      kind: "text",
-      value: "MAKE YOURS \u2192",
-      x: 120,
-      y: 578,
-      font: fD(800, 44),
-      color: C.sand,
-      letterSpacing: 1,
-    },
+
+    ...misregText("MAKE YOURS \u2192", 120, 580, fD(900, 52), "left", undefined, 0.5, true, 2),
+
     {
       kind: "text",
       value: siteLabel,
       x: 1080,
-      y: 578,
+      y: 580,
       align: "right",
-      font: fM(400, 30),
-      color: C.mango,
+      font: fM(700, 36),
+      color: C.ink,
+      letterSpacing: 2
     },
   ];
 
@@ -64,8 +64,8 @@ export function ogSpec(art: HTMLCanvasElement, siteLabel: string): FormatSpec {
     w: 1200,
     h: 630,
     background: [
-      { kind: "linearGradient", x0: 0, y0: 0, x1: 1200, y1: 630, stops: GRAD.dusk },
-      { kind: "grain", opacity: 0.04 },
+      { kind: "fill", color: C.sand },
+      { kind: "grain", opacity: 0.15 },
     ],
     photoSlots: [],
     foreground,

@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [{ url: img, width: 1200, height: 630, alt: title }],
     },
     twitter: {
-      card: "summary_large_image", 
+      card: "summary_large_image",
       title,
       description,
       images: [img],
@@ -50,8 +50,8 @@ export default async function SharePage({ params }: Props) {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col items-center justify-center gap-8 px-5 py-12">
       <div className="w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-        {}
-        {}
+        { }
+        { }
         <img src={art} alt="Hacker House Goa 2026 pass" className="w-full" />
       </div>
 

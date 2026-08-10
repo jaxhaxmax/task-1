@@ -1,70 +1,347 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0d1b2a;
-  --color-deep: #173a5e;
-  --color-coral: #ff5a36;
-  --color-mango: #ffb238;
-  --color-foam: #7fd1c1;
-  --color-sand: #f2e8d5;
-  --color-muted: #8aa0b4;
+  /* ── Tropical Nature Risograph Palette ── */
+  --color-tropic-sand:    #F5ECD7;
+  --color-tropic-cream:   #EDE4CC;
+  --color-tropic-green:   #1B6B3F;
+  --color-tropic-leaf:    #4CAF50;
+  --color-tropic-gold:    #E8A838;
+  --color-tropic-coral:   #E85D3A;
+  --color-tropic-brown:   #2C1810;
+  --color-tropic-teal:    #0E8D7A;
+  --color-tropic-sunset:  #FF8A50;
+  --color-tropic-sky:     #87CEEB;
+  --color-tropic-muted:   #8B7B5E;
 
-  --font-display: var(--f-display), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--f-mono), ui-monospace, monospace;
-  --font-sans: var(--f-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Legacy aliases kept for canvas specs */
+  --color-ink:    #2C1810;
+  --color-deep:   #1B6B3F;
+  --color-coral:  #E85D3A;
+  --color-mango:  #E8A838;
+  --color-foam:   #0E8D7A;
+  --color-sand:   #F5ECD7;
+  --color-muted:  #8B7B5E;
+
+  --font-display: var(--f-display), "Barlow Condensed", ui-sans-serif, sans-serif;
+  --font-mono:    var(--f-mono), ui-monospace, monospace;
+  --font-sans:    var(--f-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Risograph grain texture overlay ── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  mix-blend-mode: multiply;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
 body {
-  background: var(--color-ink);
-  color: var(--color-sand);
+  background: var(--color-tropic-sand);
+  color: var(--color-tropic-brown);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
+  font-family: var(--font-sans);
 }
 
+/* ══════════════════════════════════════
+   RISOGRAPH HALFTONE PATTERNS
+   ══════════════════════════════════════ */
 
-input,
-textarea,
-select,
-button {
-  font-size: 16px;
+.halftone-green {
+  background-image: radial-gradient(circle, var(--color-tropic-green) 1px, transparent 1px);
+  background-size: 8px 8px;
 }
 
+.halftone-gold {
+  background-image: radial-gradient(circle, var(--color-tropic-gold) 1px, transparent 1px);
+  background-size: 6px 6px;
+}
+
+.halftone-coral {
+  background-image: radial-gradient(circle, var(--color-tropic-coral) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+/* ── Misregistration Effect (Tropical) ── */
+.misreg {
+  position: relative;
+}
+.misreg::before,
+.misreg::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.misreg::before {
+  color: var(--color-tropic-coral);
+  transform: translate(-2px, -2px);
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+}
+.misreg::after {
+  color: var(--color-tropic-green);
+  transform: translate(2px, 2px);
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+}
+
+/* ── Thick Border Tropical Blocks ── */
+.tropic-block {
+  border: 3px solid var(--color-tropic-brown);
+  background: var(--color-tropic-sand);
+  position: relative;
+}
+
+.tropic-block-green {
+  border: 3px solid var(--color-tropic-brown);
+  background: var(--color-tropic-green);
+  color: var(--color-tropic-sand);
+  position: relative;
+}
+
+.tropic-block-gold {
+  border: 3px solid var(--color-tropic-brown);
+  background: var(--color-tropic-gold);
+  color: var(--color-tropic-brown);
+  position: relative;
+}
+
+/* ── Hard Shadow (Risograph Style) ── */
+.shadow-hard {
+  box-shadow: 4px 4px 0 var(--color-tropic-brown);
+}
+.shadow-hard-green {
+  box-shadow: 4px 4px 0 var(--color-tropic-green);
+}
+.shadow-hard-gold {
+  box-shadow: 4px 4px 0 var(--color-tropic-gold);
+}
+.shadow-hard-coral {
+  box-shadow: 4px 4px 0 var(--color-tropic-coral);
+}
+
+/* ── Tropical Leaf Border Decorations ── */
+.leaf-border-top {
+  position: relative;
+}
+.leaf-border-top::before {
+  content: "🌿";
+  position: absolute;
+  top: -14px;
+  left: 16px;
+  font-size: 18px;
+  pointer-events: none;
+  filter: drop-shadow(1px 1px 0 rgba(44,24,16,0.3));
+}
+
+/* ── Custom range slider ── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 0;
+  background: var(--color-tropic-cream);
+  border: 2px solid var(--color-tropic-brown);
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--color-tropic-gold);
+  border: 2px solid var(--color-tropic-brown);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--color-tropic-brown);
+}
+
+/* ── Focus styles ── */
 :focus-visible {
-  outline: 2px solid var(--color-mango);
+  outline: 3px solid var(--color-tropic-green);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 0;
 }
 
+/* ── Canvas ── */
 canvas {
   touch-action: none;
   overscroll-behavior: contain;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+/* ── Input base ── */
+input, textarea, select, button {
+  font-size: 16px;
+}
+
+/* ══════════════════════════════════════
+   ANIMATIONS
+   ══════════════════════════════════════ */
+
+@keyframes riso-drift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-1px, 1px); }
+  50%  { transform: translate(1px, -1px); }
+  75%  { transform: translate(-1px, -1px); }
+  100% { transform: translate(0, 0); }
 }
 
 @keyframes chip-pop {
-  0% {
-    transform: scale(0.92);
-    opacity: 0.4;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0%   { transform: scale(0.92) rotate(-1deg); opacity: 0.4; }
+  60%  { transform: scale(1.03) rotate(0.5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.chip-pop {
+  animation: chip-pop 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.chip-pop {
-  animation: chip-pop 180ms ease-out;
+@keyframes tropic-slide-in {
+  from { transform: translateY(12px) rotate(-1deg); opacity: 0; }
+  to   { transform: translateY(0) rotate(0); opacity: 1; }
+}
+.tropic-enter {
+  animation: tropic-slide-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes ink-stamp {
+  0%   { transform: scale(1.15) rotate(-3deg); opacity: 0; }
+  60%  { transform: scale(0.97) rotate(1deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.ink-stamp {
+  animation: ink-stamp 350ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes palm-sway {
+  0%, 100% { transform: rotate(-2deg) scaleX(1); }
+  50%      { transform: rotate(2deg) scaleX(-1); }
+}
+
+@keyframes wave-flow {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes sun-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(232,168,56,0.4)); }
+  50%      { filter: drop-shadow(0 0 10px rgba(232,168,56,0.7)); }
+}
+
+@keyframes stamp-wobble {
+  0%   { transform: rotate(-2deg); }
+  50%  { transform: rotate(2deg); }
+  100% { transform: rotate(-2deg); }
+}
+
+/* ── Accent bars ── */
+.bar-green {
+  height: 5px;
+  background: var(--color-tropic-green);
+  border-top: 2px solid var(--color-tropic-brown);
+  border-bottom: 2px solid var(--color-tropic-brown);
+}
+.bar-gold {
+  height: 5px;
+  background: var(--color-tropic-gold);
+  border-top: 2px solid var(--color-tropic-brown);
+  border-bottom: 2px solid var(--color-tropic-brown);
+}
+.bar-coral {
+  height: 5px;
+  background: var(--color-tropic-coral);
+  border-top: 2px solid var(--color-tropic-brown);
+  border-bottom: 2px solid var(--color-tropic-brown);
+}
+
+/* ── Wave decoration strip ── */
+.wave-strip {
+  height: 12px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12'%3E%3Cpath d='M0,6 Q15,0 30,6 T60,6 T90,6 T120,6' fill='none' stroke='%230E8D7A' stroke-width='2.5' opacity='0.7'/%3E%3Cpath d='M0,8 Q15,2 30,8 T60,8 T90,8 T120,8' fill='none' stroke='%231B6B3F' stroke-width='2' opacity='0.4'/%3E%3C/svg%3E") repeat-x;
+  background-size: 120px 12px;
+  animation: wave-flow 4s linear infinite;
+}
+
+/* ── Print/Download scan animation ── */
+@keyframes print-scan {
+  0% { transform: translateY(-100%); opacity: 0.9; }
+  10% { transform: translateY(-80%); opacity: 1; }
+  90% { transform: translateY(80%); opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0.9; }
+}
+.printing-active::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  background: linear-gradient(180deg, transparent 0%, rgba(27,107,63,0.35) 50%, transparent 100%);
+  animation: print-scan 0.8s linear forwards;
+  pointer-events: none;
+  z-index: 50;
+  mix-blend-mode: multiply;
+}
+
+/* ── Sticker badge style ── */
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: var(--color-tropic-gold);
+  color: var(--color-tropic-brown);
+  border: 2px solid var(--color-tropic-brown);
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0 var(--color-tropic-brown);
+  transform: rotate(-2deg);
+}
+
+/* ── Circular stamp ── */
+.round-stamp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid var(--color-tropic-brown);
+  background: var(--color-tropic-coral);
+  color: var(--color-tropic-sand);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  box-shadow: 2px 2px 0 var(--color-tropic-brown);
+  position: relative;
+}
+.round-stamp::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--color-tropic-sand);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

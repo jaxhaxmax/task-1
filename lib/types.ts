@@ -43,6 +43,7 @@ type TextCommon = {
   letterSpacing?: number;
   upper?: boolean;
   opacity?: number;
+  blend?: GlobalCompositeOperation;
 };
 
 export type Layer =

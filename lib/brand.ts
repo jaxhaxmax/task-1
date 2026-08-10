@@ -1,39 +1,36 @@
-
 export const C = {
-  ink: "#0D1B2A", 
-  deep: "#173A5E", 
-  coral: "#FF5A36", 
-  mango: "#FFB238", 
-  foam: "#7FD1C1", 
-  sand: "#F2E8D5", 
-  stampInk: "#C1361F", 
-  muted: "#8AA0B4", 
+  ink: "#2C1810", // Rich Brown
+  deep: "#1B6B3F", // Tropical Forest Green
+  coral: "#E85D3A", // Sunset Coral
+  mango: "#E8A838", // Golden Sun
+  foam: "#0E8D7A", // Ocean Teal
+  sand: "#F5ECD7", // Warm Sand Paper
+  stampInk: "#1B6B3F", // Forest Green Stamp
+  muted: "#8B7B5E", // Muted Earth
 } as const;
 
 export type Stop = [number, string];
 
 export const GRAD = {
   sunrise: [
-    [0, "#FF5A36"],
-    [0.55, "#FF8A3D"],
-    [1, "#FFB238"],
+    [0, "#E85D3A"],
+    [1, "#E8A838"],
   ] as Stop[],
   dusk: [
-    [0, "#0D1B2A"],
-    [1, "#173A5E"],
+    [0, "#2C1810"],
+    [1, "#1B6B3F"],
   ] as Stop[],
   glow: [
-    [0, "rgba(255,90,54,0.30)"],
-    [0.6, "rgba(255,178,56,0.10)"],
-    [1, "rgba(13,27,42,0)"],
+    [0, "rgba(232,168,56,0.2)"],
+    [1, "rgba(0,0,0,0)"],
   ] as Stop[],
 };
 
 export const RARITY = {
-  common: { label: "STANDARD", color: C.foam },
-  rare: { label: "PRIORITY", color: C.mango },
-  epic: { label: "BUSINESS", color: C.coral },
-  legendary: { label: "FOUNDER", color: C.sand },
+  common: { label: "TRAVELER", color: C.ink, bg: C.sand },
+  rare: { label: "EXPLORER", color: C.sand, bg: C.deep },
+  epic: { label: "NAVIGATOR", color: C.ink, bg: C.coral },
+  legendary: { label: "LEGEND", color: C.mango, bg: C.ink },
 } as const;
 
 export const EVENT = {
@@ -46,7 +43,7 @@ export const EVENT = {
   gate: "GOA",
   coords: "15.29\u00B0N 74.12\u00B0E",
   cohort: 247,
-  tagline: "LESS NOISE. MORE SIGNAL.",
+  tagline: "BUILD IN PARADISE. SHIP FROM THE BEACH.",
   site: "HHGOA.COM",
   handle: "@247pmstudio",
   hashtag: "#FrameInGoa",

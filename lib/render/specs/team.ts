@@ -10,12 +10,13 @@ import {
   marqueeLayer,
   perforationLayers,
   stubLayers,
+  misregText,
+  PERF_X
 } from "./idcard";
 
-
 const ROW_LEFT = 40;
-const ROW_W = 1070; 
-const ROW_CY = 300; 
+const ROW_W = 1070;
+const ROW_CY = 300;
 
 export function teamSlots(n: number): PhotoSlot[] {
   const count = Math.max(2, Math.min(6, n));
@@ -28,7 +29,7 @@ export function teamSlots(n: number): PhotoSlot[] {
     w: r * 2,
     h: r * 2,
     shape: "circle" as const,
-    ring: { width: 5, colors: [C.coral, C.mango] },
+    ring: { width: 4, colors: [C.ink, C.ink] },
   }));
 }
 
@@ -36,42 +37,42 @@ function memberNameLayers(n: number): Layer[] {
   const slots = teamSlots(n);
   const gap = ROW_W / Math.max(2, Math.min(6, n));
 
-  return slots.map((s, i) => ({
-    kind: "text" as const,
-    value: (input: RenderInput) => input.memberNames[i] || `MEMBER ${i + 1}`,
-    x: s.x + s.w / 2,
-    y: s.y + s.h + 46,
-    align: "center" as const,
-    font: fM(400, 26),
-    color: C.sand,
-    maxW: gap - 24,
-    minScale: 0.65,
-    upper: true,
-  }));
+  return slots.flatMap((s, i) => {
+    // Generate misreg text for each member
+    return misregText(
+      (input: RenderInput) => input.memberNames[i] || `MEMBER ${i + 1}`,
+      s.x + s.w / 2,
+      s.y + s.h + 46,
+      fD(900, 36),
+      "center",
+      gap - 20,
+       0.65,
+       true
+    );
+  });
 }
 
 export function teamSpec(memberCount: number): FormatSpec {
   const n = Math.max(2, Math.min(6, memberCount));
 
+  // Background needs shadow circles for the photo slots
+  const slots = teamSlots(n);
+  const shadows: Layer[] = slots.map((s) => ({
+    kind: "notch",
+    cx: s.x + s.w / 2 + 6,
+    cy: s.y + s.h / 2 + 6,
+    r: s.w / 2,
+    color: C.deep, // blue shadows for team
+  }));
+
   const foreground: Layer[] = [
-    ...headerLayers(`GROUP BOARDING \u00B7 ${n} PASSENGERS`),
+    ...headerLayers(`CREW MANIFEST \u00B7 ${n} PASSENGERS`),
     ...memberNameLayers(n),
 
-    {
-      kind: "text",
-      value: (i) => i.team || "YOUR TEAM",
-      x: 575,
-      y: 600,
-      align: "center",
-      font: fD(800, 76),
-      color: C.sand,
-      maxW: 880,
-      minScale: 0.5,
-      upper: true,
-    },
+    ...misregText((i) => i.team || "YOUR TEAM", 575, 590, fD(900, 76), "center", 880, 0.5, true),
 
-    ...dataCell(76, "BOARDING", EVENT.boarding, 740, 790),
-    ...dataCell(436, "PARTY", String(n), 740, 790),
+    ...dataCell(76, "BOARDING", EVENT.boarding, 720, 770),
+    ...dataCell(436, "PARTY", String(n), 720, 770),
 
     {
       kind: "stamp",
@@ -83,20 +84,22 @@ export function teamSpec(memberCount: number): FormatSpec {
       lines: ["ADMITTED", `${EVENT.gate} \u00B7 ${EVENT.boarding}`],
       color: C.stampInk,
       seed: (i) => Number(i.serial) * 104729,
-      fonts: { top: fM(700, 44), bottom: fM(400, 22) },
+      fonts: { top: fD(900, 48), bottom: fM(700, 18) },
     },
 
     ...perforationLayers(),
     ...stubLayers(),
     marqueeLayer(),
+    
+    { kind: "rect", x: 0, y: 700, w: PERF_X, h: 4, fill: C.ink, opacity: 0.1 },
   ];
 
   return {
     id: "team",
     w: W,
     h: H,
-    background: backgroundLayers(),
-    photoSlots: teamSlots(n),
+    background: [...backgroundLayers(), ...shadows],
+    photoSlots: slots,
     foreground,
   };
 }

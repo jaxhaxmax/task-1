@@ -53,8 +53,8 @@ export const TITLES: Record<Rarity, string[]> = {
 export type TitleResult = {
   title: string;
   rarity: Rarity;
-    serial: string;
-    seed: number;
+  serial: string;
+  seed: number;
 };
 
 export function builderTitle(name: string, role: string, salt = 0): TitleResult {
