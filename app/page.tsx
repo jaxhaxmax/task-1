@@ -15,6 +15,11 @@ import { renderPFP, toPFPRarity } from "@/lib/render/pfp-renderer";
 import { ensureFonts } from "@/lib/render/fonts";
 import { teamSpec } from "@/lib/render/specs/team";
 import {
+  renderBuilderPass, renderBuilderPassOG,
+  renderTeamPass, renderTeamPassOG,
+  builderPassCaption, builderPassFilename,
+} from "@/lib/builder-pass";
+import {
   downloadBlob,
   prepareShare,
   shareToX,
@@ -24,6 +29,9 @@ import {
 import type { Focal, FormatId, RenderInput } from "@/lib/types";
 
 import { Field, TitleReveal } from "@/components/Fields";
+import BuilderPassFields, {
+  EMPTY_FIELDS, useBuilderPassRoll, type BuilderPassFieldValues,
+} from "@/components/BuilderPassFields";
 import { FormatTabs } from "@/components/FormatTabs";
 import { Preview } from "@/components/Preview";
 import { ShareBar } from "@/components/ShareBar";
@@ -46,6 +54,8 @@ export default function Page() {
   const [team, setTeam] = useState("");
   const [memberNames, setMemberNames] = useState<string[]>(["", ""]);
   const [salt, setSalt] = useState(0);
+  const [fields, setFields] = useState<BuilderPassFieldValues>(EMPTY_FIELDS);
+  const roll = useBuilderPassRoll(fields);
   const [decoding, setDecoding] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [ready, setReady] = useState(false);
@@ -59,6 +69,12 @@ export default function Page() {
   const say = useCallback((msg: string, kind: ToastKind = "info") => {
     setToast({ msg, kind });
     if (msg) setTimeout(() => setToast({ msg: "", kind: "info" }), 4000);
+  }, []);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      import("@/lib/builder-pass").then((m) => console.log("[pass fonts]", m.fontReport()));
+    }
   }, []);
 
   useEffect(() => {
@@ -172,6 +188,14 @@ export default function Page() {
             pCtx.fill();
           }
         }
+      } else if (format === "idcard") {
+        const photo = photos[0] ?? null;
+        const focal = focals[0] ? { x: focals[0].x, y: focals[0].y } : { x: 0.5, y: 0.36 };
+        const builderInput = { photo, focal, ...fields, title: roll.title, glaze: roll.glaze, shareId: serial };
+        await renderBuilderPass(c, builderInput);
+      } else if (format === "team") {
+        const teamInput = { photos, focals, teamName: team, memberNames };
+        await renderTeamPass(c, teamInput);
       } else {
         await renderSpec(spec, input, c);
       }
@@ -179,7 +203,7 @@ export default function Page() {
       if (!cancelled) setReady(true);
     }, 90);
     return () => { cancelled = true; clearTimeout(t); };
-  }, [format, spec, input, photos, focals, rarity, serial]);
+  }, [format, spec, input, photos, focals, rarity, serial, fields, roll.title, roll.glaze, team, memberNames]);
 
   useEffect(() => {
     let cancelled = false;
@@ -187,10 +211,23 @@ export default function Page() {
       const c = canvasRef.current;
       if (!c || !ready) return;
       try {
-        const og = await renderSpec(
-          ogSpec(c, (process.env.NEXT_PUBLIC_BASE_URL || "").replace(/^https?:\/\//, "")),
-          input,
-        );
+        let og: HTMLCanvasElement;
+        if (format === "idcard") {
+          og = document.createElement("canvas");
+          const photo = photos[0] ?? null;
+          const focal = focals[0] ? { x: focals[0].x, y: focals[0].y } : { x: 0.5, y: 0.36 };
+          const builderInput = { photo, focal, ...fields, title: roll.title, glaze: roll.glaze, shareId: serial };
+          await renderBuilderPassOG(og, builderInput);
+        } else if (format === "team") {
+          og = document.createElement("canvas");
+          const teamInput = { photos, focals, teamName: team, memberNames };
+          await renderTeamPassOG(og, teamInput);
+        } else {
+          og = await renderSpec(
+            ogSpec(c, (process.env.NEXT_PUBLIC_BASE_URL || "").replace(/^https?:\/\//, "")),
+            input,
+          );
+        }
         if (cancelled) return;
         shareRef.current = await prepareShare(c, og, format, serial);
       } catch {
@@ -198,7 +235,7 @@ export default function Page() {
       }
     }, 600);
     return () => { cancelled = true; clearTimeout(t); };
-  }, [ready, input, format, serial]);
+  }, [ready, input, format, serial, fields, roll.title, roll.glaze, photos, focals, team, memberNames]);
 
   const onDownload = useCallback(async () => {
     const c = canvasRef.current;
@@ -208,7 +245,8 @@ export default function Page() {
     setTimeout(async () => {
       try {
         const blob = await toBlob(c);
-        downloadBlob(blob, `framein-goa-${format}-${serial}.png`);
+        const filename = format === "idcard" ? builderPassFilename(fields.name) : `framein-goa-${format}-${serial}.png`;
+        downloadBlob(blob, filename);
         say("Downloaded.", "success");
       } finally {
         setIsPrinting(false);
@@ -219,11 +257,16 @@ export default function Page() {
   const onShare = useCallback(async () => {
     setSharing(true);
     try {
-      const text = caption(format, { name, title, serial, team, members: memberCount });
+      let text;
+      if (format === "idcard") {
+        text = builderPassCaption({ name: fields.name, title: roll.title, glaze: roll.glaze });
+      } else {
+        text = caption(format, { name, title, serial, team, members: memberCount });
+      }
       await shareToX(shareRef.current, text);
       say("X opened — just hit Post! 🚀", "success");
     } finally { setSharing(false); }
-  }, [format, name, title, serial, team, memberCount, say]);
+  }, [format, name, title, serial, team, memberCount, say, fields.name, roll.title, roll.glaze]);
 
   const onTeamPhoto = useCallback((i: number, f: File) => handleFile(f, i), [handleFile]);
   const hasPhoto = photos.some(Boolean);
@@ -271,12 +314,12 @@ export default function Page() {
 
         {/* ── Absolute Decorative Assets ── */}
         {/* Top Left Stamp */}
-        <div className="absolute -top-12 -left-12 w-48 h-48 pointer-events-none z-20 mix-blend-multiply opacity-90 rotate-[-8deg] drop-shadow-sm">
+        <div className="absolute top-4 left-4 w-28 h-28 pointer-events-none z-20 mix-blend-multiply opacity-75 rotate-[-8deg]">
           <Image src="/brand/goa-stamp.png" alt="Goa stamp" fill className="object-contain" />
         </div>
         
-        {/* Top Right Signpost */}
-        <div className="absolute -top-16 -right-16 w-56 h-72 pointer-events-none z-20 mix-blend-multiply opacity-95 rotate-[6deg] drop-shadow-sm hidden md:block">
+        {/* Top Right Signpost — parallel in top right corner with matching size */}
+        <div className="absolute top-4 right-4 w-28 h-28 pointer-events-none z-20 mix-blend-multiply opacity-80 rotate-[8deg] hidden md:block">
           <Image src="/brand/goa-signpost.png" alt="Beach signpost" fill className="object-contain" />
         </div>
 
@@ -308,17 +351,6 @@ export default function Page() {
                 <span className="w-2 h-2 rounded-full bg-[#E85D3A]" />
                 <span>#{EVENT.hashtag}</span>
               </p>
-            </div>
-            
-            {/* Giant Barcode Stamp */}
-            <div className="shrink-0 p-4 border-4 border-[#2C1810] bg-[#F5ECD7] hidden sm:flex flex-col items-center justify-center rotate-3 shadow-[4px_4px_0_#E8A838]">
-              <div className="w-32 h-12 bg-[url('/brand/barcode-placeholder.svg')] bg-repeat-x opacity-80" />
-              <div className="flex gap-[2px] h-12 w-32 mt-2">
-                {[...Array(24)].map((_, i) => (
-                  <div key={i} className="h-full bg-[#2C1810]" style={{width: Math.random() * 4 + 1 + "px"}} />
-                ))}
-              </div>
-              <span className="font-mono text-[9px] mt-2 font-bold tracking-[0.3em] text-[#2C1810]">ADMIT ONE (1)</span>
             </div>
           </header>
 
@@ -358,10 +390,7 @@ export default function Page() {
                 {/* ── Conditional fields ── */}
                 {format === "idcard" && (
                   <div className="flex flex-col gap-5 p-5 bg-[#EDE4CC] border-4 border-[#2C1810] shadow-[6px_6px_0_#1B6B3F]">
-                    <Field label="NAME" value={name} onChange={setName} placeholder="Arjun Mehta" maxLength={28} />
-                    <Field label="STACK / ROLE" value={role} onChange={setRole} placeholder="full-stack · solidity" />
-                    <Field label="WHAT ARE YOU SHIPPING" value={shipping} onChange={setShipping} placeholder="Onchain agents" maxLength={28} />
-                    <TitleReveal title={title} rarity={rarity} serial={serial} onReroll={() => setSalt((s) => s + 1)} />
+                    <BuilderPassFields values={fields} onChange={setFields} roll={roll} onReroll={roll.reroll} />
                   </div>
                 )}
 

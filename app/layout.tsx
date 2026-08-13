@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, JetBrains_Mono, Inter, Noto_Sans_Devanagari } from "next/font/google";
+import { Barlow_Condensed, JetBrains_Mono, Inter, Noto_Sans_Devanagari, Fraunces, Noto_Serif_Devanagari } from "next/font/google";
 import "./globals.css";
 
 /* Huge condensed grotesque — bold tropical display */
@@ -31,6 +31,19 @@ const sans = Inter({
   subsets: ["latin"],
   variable: "--f-sans",
   display: "swap",
+});
+
+const passDisplay = Fraunces({
+  subsets: ['latin'], weight: ['600','700','900'], style: ['normal','italic'],
+  display: 'block', variable: '--font-pass-display',
+});
+const passMono = JetBrains_Mono({
+  subsets: ['latin'], weight: ['400','500','600','700'],
+  display: 'block', variable: '--font-pass-mono',
+});
+const passDeva = Noto_Serif_Devanagari({
+  subsets: ['devanagari'], weight: ['600','700'],
+  display: 'block', variable: '--font-pass-deva',
 });
 
 const BASE = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -68,7 +81,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${mono.variable} ${sans.variable} ${devanagari.variable}`}
+      className={`${display.variable} ${mono.variable} ${sans.variable} ${devanagari.variable} ${passDisplay.variable} ${passMono.variable} ${passDeva.variable}`}
     >
       <body className="font-sans antialiased">{children}</body>
     </html>
