@@ -54,4 +54,5 @@ export const ASSETS = {
   goaDevanagari: "/brand/goa-devanagari.svg",
   wordmark: "/brand/hh-goa-wordmark.svg",
   palm: "/brand/palm.png",
+  goaBg: "/brand/goa-bg.png",
 } as const;

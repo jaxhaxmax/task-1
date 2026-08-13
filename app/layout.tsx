@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, JetBrains_Mono, Inter } from "next/font/google";
+import { Barlow_Condensed, JetBrains_Mono, Inter, Noto_Sans_Devanagari } from "next/font/google";
 import "./globals.css";
 
 /* Huge condensed grotesque — bold tropical display */
@@ -15,6 +15,14 @@ const display = Barlow_Condensed({
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--f-mono",
+  display: "block",
+});
+
+/* Devanagari font for Goa native mark */
+const devanagari = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  weight: ["700"],
+  variable: "--f-devanagari",
   display: "block",
 });
 
@@ -60,7 +68,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${mono.variable} ${sans.variable}`}
+      className={`${display.variable} ${mono.variable} ${sans.variable} ${devanagari.variable}`}
     >
       <body className="font-sans antialiased">{children}</body>
     </html>

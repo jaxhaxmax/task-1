@@ -41,25 +41,13 @@ export async function shareToX(
   payload: SharePayload | null,
   captionText: string,
 ): Promise<ShareResult> {
-  
-  if (payload && navigator.canShare?.({ files: [payload.file] })) {
-    try {
-      
-      
-      await navigator.share({ files: [payload.file], text: captionText });
-      return "native";
-    } catch (e) {
-      if ((e as { name?: string })?.name === "AbortError") return "cancelled";
-      
-    }
-  }
-
   const base = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
   const { id } = payload ? await payload.upload : { id: null };
   const url = id ? `${base}/f/${id}` : base;
 
+  // Always open X compose directly — user just hits "Post"
   window.open(
-    `https://x.com/intent/post?text=${encodeURIComponent(captionText)}&url=${encodeURIComponent(url)}`,
+    `https://x.com/intent/post?text=${encodeURIComponent(captionText + "\n")}&url=${encodeURIComponent(url)}`,
     "_blank",
     "noopener,noreferrer",
   );

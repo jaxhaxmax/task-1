@@ -1,6 +1,7 @@
 
 let DISPLAY = "sans-serif";
 let MONO = "monospace";
+let DEVANAGARI = "sans-serif";
 let resolved = false;
 let readyPromise: Promise<void> | null = null;
 
@@ -9,9 +10,11 @@ function resolveFamilies() {
   const cs = getComputedStyle(document.documentElement);
   const d = cs.getPropertyValue("--f-display").trim();
   const m = cs.getPropertyValue("--f-mono").trim();
-  if (!d || !m) return; 
+  const dv = cs.getPropertyValue("--f-devanagari").trim();
+  if (!d || !m) return;
   DISPLAY = d;
   MONO = m;
+  if (dv) DEVANAGARI = dv;
   resolved = true;
 }
 
@@ -25,6 +28,12 @@ export function fM(weight: number, size: number): string {
   return `${weight} ${size}px ${MONO}, monospace`;
 }
 
+/** Devanagari — Noto Sans Devanagari via --f-devanagari CSS var */
+export function fDev(weight: number, size: number): string {
+  resolveFamilies();
+  return `${weight} ${size}px ${DEVANAGARI}, sans-serif`;
+}
+
 export function ensureFonts(): Promise<void> {
   resolveFamilies();
   if (readyPromise && resolved) return readyPromise;
@@ -32,7 +41,6 @@ export function ensureFonts(): Promise<void> {
   readyPromise = (async () => {
     if (typeof document === "undefined") return;
 
-    
     resolveFamilies();
 
     const faces = [
@@ -40,6 +48,7 @@ export function ensureFonts(): Promise<void> {
       fD(700, 40),
       fM(700, 32),
       fM(400, 26),
+      fDev(700, 44),
     ];
 
     await Promise.all(

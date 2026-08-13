@@ -10,6 +10,7 @@ export type RenderInput = {
   focals: Focal[];
   name: string;
   role: string;
+  shipping?: string;
   team: string;
   memberNames: string[];
   title: string;
@@ -27,8 +28,9 @@ export type PhotoSlot = {
   w: number;
   h: number;
   shape: "circle" | "rect";
-    radius?: number;
+  radius?: number;
   ring?: { width: number; colors: string[] };
+  filter?: string;
 };
 
 type TextCommon = {

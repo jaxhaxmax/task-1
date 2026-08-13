@@ -374,13 +374,15 @@ export async function renderSpec(
     if (!bmp) {
       drawPlaceholder(ctx, slot);
       if (slot.ring) drawRing(ctx, slot);
-      return;
+      continue; // ← was `return` which killed foreground rendering!
     }
     const f = input.focals[i] ?? { x: 0.5, y: 0.32, zoom: 1 };
     const { sx, sy, sw, sh } = coverRect(bmp.width, bmp.height, slot.w, slot.h, f);
     ctx.save();
     clipToSlot(ctx, slot);
+    if (slot.filter) ctx.filter = slot.filter;
     ctx.drawImage(bmp, sx, sy, sw, sh, slot.x, slot.y, slot.w, slot.h);
+    if (slot.filter) ctx.filter = 'none';
     ctx.restore();
     if (slot.ring) drawRing(ctx, slot);
   }

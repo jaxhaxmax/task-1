@@ -8,34 +8,44 @@ export function caption(
   switch (format) {
     case "idcard":
       return [
-        "Builder pass secured. \u2708\uFE0F",
-        "",
-        `${d.name || "Builder"} \u00B7 ${d.title}`,
-        `Seat #${d.serial}/${EVENT.cohort} \u00B7 Boarding ${EVENT.boarding}`,
-        "",
-        "Grab yours \u2193",
+        `✈️ I just got my Hacker House Goa 2026 Builder Pass!`,
+        ``,
+        `🌴 ${d.name || "Builder"} · ${d.title}`,
+        `🎫 Seat #${d.serial}/${EVENT.cohort} · Boarding ${EVENT.boarding}`,
+        `📍 Goa, India`,
+        ``,
+        `Building in paradise, shipping from the beach 🏄`,
+        ``,
+        `Grab yours 👇`,
         EVENT.hashtag,
+        `#BuildInGoa #Hackathon #ShipFromParadise`,
       ].join("\n");
 
     case "team":
       return [
-        `${d.team || "Our team"} is boarding. \u2708\uFE0F`,
-        "",
-        `${d.members} passengers \u00B7 ${EVENT.datesPretty} \u00B7 Goa`,
-        "",
-        "Make your team's pass \u2193",
+        `🌴 ${d.team || "Our team"} is heading to Hacker House Goa 2026!`,
+        ``,
+        `👥 ${d.members} builders · ${EVENT.datesPretty} · Goa, India`,
+        ``,
+        `We're building something big — see you on the beach 🏄‍♂️`,
+        ``,
+        `Make your crew's pass 👇`,
         EVENT.hashtag,
+        `#BuildInGoa #HackerHouseGoa`,
       ].join("\n");
 
     default:
       return [
-        "Got my Hacker House Goa 2026 frame. \uD83C\uDF34",
-        "",
-        `Class: ${d.title}`,
-        `${EVENT.datesPretty} \u00B7 Goa \u00B7 ${EVENT.cohort} builders`,
-        "",
-        "Make yours in 5 seconds \u2193",
+        `🌴 Just generated my Hacker House Goa 2026 PFP!`,
+        ``,
+        `🏷️ Builder Class: ${d.title}`,
+        `📍 ${EVENT.datesPretty} · Goa, India · ${EVENT.cohort} builders`,
+        ``,
+        `Building in paradise. Shipping from the beach. 🚀`,
+        ``,
+        `Make yours in 5 sec 👇`,
         EVENT.hashtag,
+        `#BuildInGoa #HackerHouseGoa #ShipFromParadise`,
       ].join("\n");
   }
 }

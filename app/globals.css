@@ -245,6 +245,43 @@ input, textarea, select, button {
   100% { transform: rotate(-2deg); }
 }
 
+/* ── Ambient Background Motion (Builder Pass) ── */
+@keyframes azulejo-drift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-148px, -148px); } /* 2 tiles (74px * 2) seamless loops */
+}
+.azulejo-drift {
+  animation: azulejo-drift 90s linear infinite;
+  /* Repeated SVG tile to match the 74px tile drawn in canvas */
+  /* Motif is 37px radius arcs on corners/edges, 7px corners */
+  /* Here we just use a simplified representative tile or an abstract radial repeat */
+  background-image: radial-gradient(circle at 50% 50%, transparent 0, transparent 20px, var(--color-tropic-brown) 21px, var(--color-tropic-brown) 23px, transparent 24px);
+  background-size: 74px 74px;
+}
+
+@keyframes dapple-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(15vw, -10vh) scale(1.1); }
+}
+@keyframes dapple-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-12vw, 15vh) scale(0.9); }
+}
+@keyframes dapple-3 {
+  0%, 100% { transform: translate(0, 0) scale(1.05); }
+  50% { transform: translate(10vw, 12vh) scale(0.95); }
+}
+.dapple {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-tropic-gold);
+  filter: blur(80px);
+  opacity: 0.05;
+}
+.dapple-1 { animation: dapple-1 45s ease-in-out infinite; width: 60vw; height: 60vw; top: -10%; left: -10%; }
+.dapple-2 { animation: dapple-2 38s ease-in-out infinite; width: 45vw; height: 45vw; top: 40%; right: -5%; }
+.dapple-3 { animation: dapple-3 50s ease-in-out infinite; width: 55vw; height: 55vw; bottom: -10%; left: 20%; }
+
 /* ── Accent bars ── */
 .bar-green {
   height: 5px;

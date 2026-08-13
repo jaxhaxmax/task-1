@@ -11,7 +11,8 @@ import { ImageLoadError, loadImage } from "@/lib/image/load";
 import { renderSpec } from "@/lib/render/engine";
 import { idcardSpec } from "@/lib/render/specs/idcard";
 import { ogSpec } from "@/lib/render/specs/og";
-import { pfpSpec } from "@/lib/render/specs/pfp";
+import { renderPFP, toPFPRarity } from "@/lib/render/pfp-renderer";
+import { ensureFonts } from "@/lib/render/fonts";
 import { teamSpec } from "@/lib/render/specs/team";
 import {
   downloadBlob,
@@ -41,6 +42,7 @@ export default function Page() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
+  const [shipping, setShipping] = useState("");
   const [team, setTeam] = useState("");
   const [memberNames, setMemberNames] = useState<string[]>(["", ""]);
   const [salt, setSalt] = useState(0);
@@ -63,18 +65,19 @@ export default function Page() {
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (!raw) return;
-      const d = JSON.parse(raw) as { name?: string; role?: string; team?: string };
+      const d = JSON.parse(raw) as { name?: string; role?: string; shipping?: string; team?: string };
       if (d.name) setName(d.name);
       if (d.role) setRole(d.role);
+      if (d.shipping) setShipping(d.shipping);
       if (d.team) setTeam(d.team);
     } catch {}
   }, []);
 
   useEffect(() => {
     try {
-      localStorage.setItem(LS_KEY, JSON.stringify({ name, role, team }));
+      localStorage.setItem(LS_KEY, JSON.stringify({ name, role, shipping, team }));
     } catch {}
-  }, [name, role, team]);
+  }, [name, role, shipping, team]);
 
   const { title, rarity, serial } = useMemo(
     () => builderTitle(name, role, salt),
@@ -84,14 +87,13 @@ export default function Page() {
   const memberCount = memberNames.length;
 
   const spec = useMemo(() => {
-    if (format === "pfp") return pfpSpec();
     if (format === "idcard") return idcardSpec();
     return teamSpec(memberCount);
   }, [format, memberCount]);
 
   const input: RenderInput = useMemo(
-    () => ({ photos, focals, name, role, team, memberNames, title, rarity, serial }),
-    [photos, focals, name, role, team, memberNames, title, rarity, serial],
+    () => ({ photos, focals, name, role, shipping, team, memberNames, title, rarity, serial }),
+    [photos, focals, name, role, shipping, team, memberNames, title, rarity, serial],
   );
 
   const handleFile = useCallback(
@@ -144,11 +146,40 @@ export default function Page() {
     const t = setTimeout(async () => {
       const c = canvasRef.current;
       if (!c) return;
-      await renderSpec(spec, input, c);
+
+      if (format === "pfp") {
+        await ensureFonts();
+        const photo = photos[0];
+        // renderPFP requires a photo source; fall back to a blank if none yet
+        if (photo) {
+          renderPFP(c, {
+            photo,
+            rarity: toPFPRarity(rarity),
+            serial,
+            focal: focals[0] ? { x: focals[0].x, y: focals[0].y } : undefined,
+          });
+        } else {
+          // Draw placeholder: dark ring with no photo
+          c.width = 1000;
+          c.height = 1000;
+          const pCtx = c.getContext("2d");
+          if (pCtx) {
+            pCtx.fillStyle = "#0D1B2A";
+            pCtx.fillRect(0, 0, 1000, 1000);
+            pCtx.beginPath();
+            pCtx.arc(500, 500, 418, 0, Math.PI * 2);
+            pCtx.fillStyle = "#173A5E";
+            pCtx.fill();
+          }
+        }
+      } else {
+        await renderSpec(spec, input, c);
+      }
+
       if (!cancelled) setReady(true);
     }, 90);
     return () => { cancelled = true; clearTimeout(t); };
-  }, [spec, input]);
+  }, [format, spec, input, photos, focals, rarity, serial]);
 
   useEffect(() => {
     let cancelled = false;
@@ -189,10 +220,8 @@ export default function Page() {
     setSharing(true);
     try {
       const text = caption(format, { name, title, serial, team, members: memberCount });
-      const res = await shareToX(shareRef.current, text);
-      if (res === "link-fallback") {
-        say("Composer open. Attach the downloaded image to your post.", "info");
-      }
+      await shareToX(shareRef.current, text);
+      say("X opened — just hit Post! 🚀", "success");
     } finally { setSharing(false); }
   }, [format, name, title, serial, team, memberCount, say]);
 
@@ -331,6 +360,7 @@ export default function Page() {
                   <div className="flex flex-col gap-5 p-5 bg-[#EDE4CC] border-4 border-[#2C1810] shadow-[6px_6px_0_#1B6B3F]">
                     <Field label="NAME" value={name} onChange={setName} placeholder="Arjun Mehta" maxLength={28} />
                     <Field label="STACK / ROLE" value={role} onChange={setRole} placeholder="full-stack · solidity" />
+                    <Field label="WHAT ARE YOU SHIPPING" value={shipping} onChange={setShipping} placeholder="Onchain agents" maxLength={28} />
                     <TitleReveal title={title} rarity={rarity} serial={serial} onReroll={() => setSalt((s) => s + 1)} />
                   </div>
                 )}
